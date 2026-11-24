@@ -10,10 +10,26 @@
 body{margin:0;font-size:14px;-webkit-text-size-adjust:100%}
 img{max-width:100%}
 [hidden]{display:none!important}
+.line:disabled{opacity:.6;cursor:default}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+/* Done screen */
+.done{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;display:flex;flex-direction:column}
+.done .dw{margin:auto;width:100%;max-width:400px;box-sizing:border-box;padding-inline:20px;padding-block:calc(40px + env(safe-area-inset-top,0px)) calc(32px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.done .ck{width:72px;height:72px;border-radius:50%;background:var(--ribbon);display:grid;place-items:center;color:#fff;font-size:36px;font-weight:700}
+.done .ty{font-family:"Great Vibes",cursive;font-size:56px;color:var(--ribbon);line-height:1.05;margin-top:6px}
+.done h2{margin:0;font-family:var(--display);font-size:22px}
+.done .ld{margin:0;color:var(--muted);font-size:16px}
+.done .box{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;text-align:left;margin-top:8px;box-sizing:border-box}
+.done .box b{display:block;font-size:13px;color:var(--muted);margin-bottom:8px}
+.done table{border-collapse:collapse;width:100%;font-size:14px}
+.done th{text-align:left;font-weight:500;color:var(--muted);padding:6px 10px 6px 0;vertical-align:top;white-space:nowrap;width:6.5em}
+.done td{padding:6px 0;line-height:1.6;overflow-wrap:anywhere}
+.done tr+tr th,.done tr+tr td{border-top:1px solid var(--line)}
+.done .nt{margin:0;font-size:13px;color:var(--muted)}
 </style>
 <title>えらんでギフト</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700&family=Zen+Maru+Gothic:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Serif+JP:wght@700&family=Zen+Maru+Gothic:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <style>
 /* Layout: a gift-tag header, then one column of tall product cards; tap a card to pick it, a ribbon-coloured bar confirms the pick */
 :root{
@@ -148,7 +164,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,7vw,34px);lin
 .dform .note{margin:0;font-size:12px;color:var(--muted);line-height:1.6;font-weight:400}
 .dbar{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px));display:grid;gap:6px;justify-items:center}
 .dbar .inner{width:100%;max-width:528px;display:grid;gap:6px}
-.line{display:block;text-align:center;text-decoration:none;font-weight:700;font-size:16px;border-radius:999px;padding:14px 0;background:var(--ribbon);color:#fff}
+.line{display:block;width:100%;border:0;font-family:inherit;cursor:pointer;text-align:center;text-decoration:none;font-weight:700;font-size:16px;border-radius:999px;padding:14px 0;background:var(--ribbon);color:#fff}
 .line:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .sendto{text-align:center;font-size:15px}
 .sendto b{color:var(--ribbon);font-size:17px}
@@ -266,7 +282,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,7vw,34px);lin
     <div>
       <span class="tag">DELIVERY</span>
       <h2 id="deliv-title">どこに届けたらいい？</h2>
-      <p class="lead">入力した内容はLINEで送るだけで、このページには残りません。</p>
+      <p class="lead">受け取りやすい場所を教えてね。</p>
     </div>
     <div class="dgift"><span class="pic"><img id="deliv-img" src="" alt=""></span><div><small>選んだプレゼント</small><b id="deliv-name"></b></div></div>
     <div class="seg" id="seg">
@@ -275,6 +291,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,7vw,34px);lin
     </div>
     <div class="bignote" id="bignote" hidden><span aria-hidden="true">📦</span><span>大きいプレゼントなので、ご自宅に届けるね。住所を教えてください。</span></div>
     <form class="dform" id="dform" novalidate>
+      <div class="hp" aria-hidden="true"><label>空欄のままにしてください<input id="f-hp" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
       <label>お名前<input id="f-name" autocomplete="name" placeholder="山田 花子" required></label>
       <div id="home-fields" style="display:grid;gap:12px">
         <div class="row2">
@@ -293,17 +310,26 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,7vw,34px);lin
           <button type="button" aria-pressed="false">その他</button>
         </div></label>
         <label>店舗名・場所<input id="f-store" placeholder="〇〇駅前店"></label>
-        <p class="note">受け取りに必要な番号は、あとでLINEで連絡します。</p>
+        <p class="note">受け取りに必要な番号は、あとで連絡するね。</p>
       </div>
     </form>
   </div>
   <div class="dbar"><div class="inner">
     <p class="derr" id="derr" hidden></p>
-    <a class="line" id="line-send" href="https://line.me/R/share" target="_blank" rel="noopener">LINEで送る</a>
-    <div class="sendto"><b>だいち</b> に送ってね</div>
-    <div class="dsub">LINEが開くので、送り先に「だいち」を選んで送信してください</div>
+    <button class="line" id="send" type="button">送る</button>
   </div></div>
 </div>
+<div class="done" id="done" hidden role="dialog" aria-modal="true" aria-labelledby="done-title">
+  <div class="dw">
+    <div class="ck" aria-hidden="true">✓</div>
+    <div class="ty">Thank you</div>
+    <h2 id="done-title">お届け先を受け付けました</h2>
+    <p class="ld">届くまで待っててね🎁</p>
+    <div class="box"><b>受付内容</b><table id="done-table"></table></div>
+    <p class="nt" id="done-note" hidden>受け取り番号は、あとで連絡するね。</p>
+  </div>
+</div>
+
 <div class="celebrate" id="celebrate" hidden role="dialog" aria-modal="true" aria-labelledby="cel-title">
   <canvas id="confetti" aria-hidden="true"></canvas>
   <div class="cm">
@@ -389,7 +415,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,7vw,34px);lin
   });
   var deliv=document.getElementById('deliv'),mode='home',chosen=null,store='';
   var homeF=document.getElementById('home-fields'),cvsF=document.getElementById('cvs-fields');
-  var derr=document.getElementById('derr'),lineA=document.getElementById('line-send');
+  var derr=document.getElementById('derr'),sendB=document.getElementById('send'),sent=false;
   function $(id){return document.getElementById(id)}
   function setMode(m){
     mode=m;$('mode-home').setAttribute('aria-pressed',String(m==='home'));$('mode-cvs').setAttribute('aria-pressed',String(m==='cvs'));
@@ -421,10 +447,39 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,7vw,34px);lin
     return '';
   }
   ['f-name','f-zip','f-tel','f-addr','f-store'].forEach(function(id){$(id).addEventListener('input',function(){$(id).setAttribute('aria-invalid','false');derr.hidden=true})});
-  lineA.addEventListener('click',function(e){
+  var ENDPOINT='https://formspree.io/f/xzerkoqk';
+  function rows(){
+    var r=[['プレゼント',chosen.dataset.name]];
+    if(mode==='home'){
+      r.push(['受け取り方','自宅に届ける'],['お届け先','〒'+v('f-zip')+'\n'+v('f-addr')+(v('f-bldg')?'\n'+v('f-bldg'):'')],['お名前',v('f-name')],['電話番号',v('f-tel')]);
+      if(v('f-time'))r.push(['希望の時間帯',v('f-time')]);
+    }else{
+      r.push(['受け取り方','コンビニ受け取り'],['受け取り場所',store+'\n'+v('f-store')],['お名前',v('f-name')]);
+    }
+    return r;
+  }
+  function showDone(r){
+    var tb=$('done-table');tb.textContent='';
+    r.forEach(function(x){var tr=document.createElement('tr'),th=document.createElement('th'),td=document.createElement('td');
+      th.textContent=x[0];x[1].split('\n').forEach(function(line,i){if(i)td.appendChild(document.createElement('br'));td.appendChild(document.createTextNode(line))});
+      tr.append(th,td);tb.appendChild(tr)});
+    $('done-note').hidden=mode!=='cvs';
+    deliv.hidden=true;$('done').hidden=false;$('done').scrollTop=0;
+  }
+  sendB.addEventListener('click',function(){
+    if(sent)return;
     var err=check();
-    if(err){e.preventDefault();derr.textContent=err;derr.hidden=false;return}
-    lineA.href='https://line.me/R/share?text='+encodeURIComponent(message());
+    if(err){derr.textContent=err;derr.hidden=false;return}
+    var r=rows(),data={_subject:'プレゼントが選ばれました：'+chosen.dataset.name,_gotcha:$('f-hp').value};
+    r.forEach(function(x){data[x[0]]=x[1]});
+    data['メッセージ全文']=message();
+    sendB.disabled=true;sendB.textContent='送信中…';derr.hidden=true;
+    fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(data)})
+      .then(function(res){if(!res.ok)throw new Error('status '+res.status);sent=true;showDone(r)})
+      .catch(function(){
+        sendB.disabled=false;sendB.textContent='送る';
+        derr.textContent='送れませんでした。電波のよいところで、もう一度「送る」を押してください。';derr.hidden=false;
+      });
   });
   $('to-delivery').addEventListener('click',function(){
     chosen=cards.filter(function(c){return c.getAttribute('aria-pressed')==='true'})[0];if(!chosen)return;
